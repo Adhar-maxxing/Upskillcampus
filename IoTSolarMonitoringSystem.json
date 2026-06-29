@@ -1,0 +1,1084 @@
+[
+    {
+        "id": "8151e0190ca9ce99",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dd7eb2e636012af2",
+        "type": "inject",
+        "z": "8151e0190ca9ce99",
+        "name": "Solar Data Trigger",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "e7d5a462e639bc19"
+            ]
+        ]
+    },
+    {
+        "id": "e7d5a462e639bc19",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Generate Solar Data",
+        "func": "let voltage = 18 + Math.random() * 4;\nlet current = 3 + Math.random() * 2;\nlet power = voltage * current;\nlet temperature = 28 + Math.random() * 16;\nlet battery_voltage = 11 + Math.random() * 2;\nlet efficiency = 75 + Math.random() * 20;\n\nmsg.payload = {\n    voltage: Number(voltage.toFixed(2)),\n    current: Number(current.toFixed(2)),\n    power: Number(power.toFixed(2)),\n    temperature: Number(temperature.toFixed(2)),\n    battery_voltage: Number(battery_voltage.toFixed(2)),\n    efficiency: Number(efficiency.toFixed(2)),\n    timestamp: new Date().toISOString()\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 160,
+        "wires": [
+            [
+                "cf120f4ceadecb64"
+            ]
+        ]
+    },
+    {
+        "id": "ab2a579e4e821f0d",
+        "type": "debug",
+        "z": "8151e0190ca9ce99",
+        "name": "Solar Data Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "cf120f4ceadecb64",
+        "type": "mqtt out",
+        "z": "8151e0190ca9ce99",
+        "name": "Publish Solar Data",
+        "topic": "solar/data",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "31568a59bb2631e9",
+        "x": 670,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "1fd4e9856a6fb279",
+        "type": "mqtt in",
+        "z": "8151e0190ca9ce99",
+        "name": "Receive Solar Data",
+        "topic": "solar/data",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "31568a59bb2631e9",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 220,
+        "wires": [
+            [
+                "74bde12c207afb77"
+            ]
+        ]
+    },
+    {
+        "id": "2df22ea020520a5c",
+        "type": "change",
+        "z": "8151e0190ca9ce99",
+        "name": "Extract Voltage",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.voltage",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 260,
+        "wires": [
+            [
+                "45a94f8c50bf5d7e"
+            ]
+        ]
+    },
+    {
+        "id": "45a94f8c50bf5d7e",
+        "type": "ui-gauge",
+        "z": "8151e0190ca9ce99",
+        "name": "VOLTAGE GAUGE",
+        "group": "7070a123b1e7404a",
+        "order": 9,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "VOLTAGE GAUGE",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "V",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "17",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "18",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "30",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5191641c3589ebd5",
+        "type": "change",
+        "z": "8151e0190ca9ce99",
+        "name": "extract current",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.current",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 300,
+        "wires": [
+            [
+                "b919f64ce06ccab7"
+            ]
+        ]
+    },
+    {
+        "id": "b919f64ce06ccab7",
+        "type": "ui-gauge",
+        "z": "8151e0190ca9ce99",
+        "name": "CURRENT GAUGE",
+        "group": "7070a123b1e7404a",
+        "order": 10,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Current",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "A",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd613",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": 10,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e01614c9255dadc5",
+        "type": "change",
+        "z": "8151e0190ca9ce99",
+        "name": "extract power",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.power",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 340,
+        "wires": [
+            [
+                "81ad4baf559374ec"
+            ]
+        ]
+    },
+    {
+        "id": "81ad4baf559374ec",
+        "type": "ui-gauge",
+        "z": "8151e0190ca9ce99",
+        "name": "POWER GAUGE",
+        "group": "7070a123b1e7404a",
+        "order": 11,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Power",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "W",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "100",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "125",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "150",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c37fa9202256a155",
+        "type": "change",
+        "z": "8151e0190ca9ce99",
+        "name": "extract temperature",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.temperature",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 380,
+        "wires": [
+            [
+                "858683e5013f7cd1"
+            ]
+        ]
+    },
+    {
+        "id": "858683e5013f7cd1",
+        "type": "ui-gauge",
+        "z": "8151e0190ca9ce99",
+        "name": "TEMPERATURE GAUGE",
+        "group": "7070a123b1e7404a",
+        "order": 12,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Temperature",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "°C",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "40",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "45",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "60",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "312ade5f415604ee",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Extract Power Trend",
+        "func": "msg.topic = \"Power Output\";\nmsg.payload = Number(msg.payload.power);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 420,
+        "wires": [
+            [
+                "603b2918b76e801e"
+            ]
+        ]
+    },
+    {
+        "id": "603b2918b76e801e",
+        "type": "ui-chart",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "name": "Power Trend Chart",
+        "label": "Power Trend",
+        "order": 13,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "Time",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "Power (W)",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "0",
+        "ymax": "150",
+        "bins": 10,
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": "2",
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#a347e1",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "5",
+        "className": "",
+        "interpolation": "linear",
+        "x": 930,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9149600b89860252",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Extract Fault",
+        "func": "msg.payload = msg.payload.fault;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 460,
+        "wires": [
+            [
+                "de3722d4208ee0dc"
+            ]
+        ]
+    },
+    {
+        "id": "de3722d4208ee0dc",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "name": "Fault Status",
+        "label": "System Status",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 870,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "b1a36bf055ba11f0",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Format Alert Display",
+        "func": "if (msg.payload.alerts.length === 0) {\n    msg.payload = \"✅ SYSTEM NORMAL\";\n}\nelse {\n    msg.payload = msg.payload.alerts.join(\" | \");\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 500,
+        "wires": [
+            [
+                "b48aaf41c21659b0"
+            ]
+        ]
+    },
+    {
+        "id": "b48aaf41c21659b0",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "Alert Display",
+        "label": "Alerts",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 910,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "eee8075565da64d3",
+        "type": "csv",
+        "z": "8151e0190ca9ce99",
+        "name": "Convert to CSV",
+        "spec": "rfc",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "once",
+        "multi": "one",
+        "ret": "\\r\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 840,
+        "y": 540,
+        "wires": [
+            [
+                "a8d9d54268267786"
+            ]
+        ]
+    },
+    {
+        "id": "a8d9d54268267786",
+        "type": "file",
+        "z": "8151e0190ca9ce99",
+        "name": "Solar CSV Logger",
+        "filename": "C:\\Users\\chaud\\Documents\\INTERNSHIP STUFF\\UCT\\Project\\v6\\solar_log.csv",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1070,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "74bde12c207afb77",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Validate & Analyze Data",
+        "func": "let data = msg.payload;\n\nif (\n    data.voltage === undefined ||\n    data.current === undefined ||\n    data.power === undefined ||\n    data.temperature === undefined\n) {\n    return null;\n}\n\nconst thresholds = {\n    voltage: {\n        warning_low: 17.5,\n        critical_low: 17\n    },\n\n    temperature: {\n        warning_high: 40,\n        critical_high: 45\n    },\n\n    battery_voltage: {\n        warning_low: 11.2,\n        critical_low: 10.8\n    }\n};\n\ndata.alerts = [];\nif (data.voltage < thresholds.voltage.critical_low) {\n    data.alerts.push(\"CRITICAL LOW VOLTAGE\");\n}\nelse if (data.voltage < thresholds.voltage.warning_low) {\n    data.alerts.push(\"LOW VOLTAGE WARNING\");\n}\nif (data.temperature > thresholds.temperature.critical_high) {\n    data.alerts.push(\"CRITICAL HIGH TEMPERATURE\");\n}\nelse if (data.temperature > thresholds.temperature.warning_high) {\n    data.alerts.push(\"HIGH TEMPERATURE WARNING\");\n}\nif (data.battery_voltage < thresholds.battery_voltage.critical_low) {\n    data.alerts.push(\"CRITICAL LOW BATTERY\");\n}\nelse if (data.battery_voltage < thresholds.battery_voltage.warning_low) {\n    data.alerts.push(\"LOW BATTERY WARNING\");\n}\nif (data.alerts.length > 0) {\n    data.fault = \"FAULT\";\n}\nelse {\n    data.fault = \"NORMAL\";\n}\n\nmsg.payload = data;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "ab2a579e4e821f0d",
+                "2df22ea020520a5c",
+                "5191641c3589ebd5",
+                "e01614c9255dadc5",
+                "c37fa9202256a155",
+                "312ade5f415604ee",
+                "9149600b89860252",
+                "b1a36bf055ba11f0",
+                "bfd51e8de26bdbd2",
+                "50394b78d4ddb080",
+                "0c769d2e1bb95029",
+                "9a53dd82d868677a",
+                "76ba225239afde3f",
+                "f67a9cf74f7517c8",
+                "a60b929c2b017df5"
+            ]
+        ]
+    },
+    {
+        "id": "bfd51e8de26bdbd2",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Extract Battery Voltage",
+        "func": "msg.payload = msg.payload.battery_voltage + \" V\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 580,
+        "wires": [
+            [
+                "66d314c63e7594af"
+            ]
+        ]
+    },
+    {
+        "id": "66d314c63e7594af",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 6,
+        "width": "3",
+        "height": "1",
+        "name": "Battery Voltage",
+        "label": "Battery Voltage",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 900,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "50394b78d4ddb080",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Extract Efficiency",
+        "func": "msg.payload = msg.payload.efficiency + \" %\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 620,
+        "wires": [
+            [
+                "745cde50a8961c28"
+            ]
+        ]
+    },
+    {
+        "id": "745cde50a8961c28",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 5,
+        "width": "3",
+        "height": "1",
+        "name": "System Efficiency",
+        "label": "System Efficiency",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 910,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "0c769d2e1bb95029",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "clean up",
+        "func": "delete msg.payload.alerts;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 540,
+        "wires": [
+            [
+                "eee8075565da64d3"
+            ]
+        ]
+    },
+    {
+        "id": "9a53dd82d868677a",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Calculate Average Power",
+        "func": "let totalPower = flow.get(\"totalPower\") || 0;\nlet powerCount = flow.get(\"powerCount\") || 0;\n\ntotalPower += msg.payload.power;\npowerCount += 1;\n\nflow.set(\"totalPower\", totalPower);\nflow.set(\"powerCount\", powerCount);\n\nlet averagePower = totalPower / powerCount;\n\nmsg.payload = averagePower.toFixed(2) + \" W\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 660,
+        "wires": [
+            [
+                "66fcb28aa129ef9c"
+            ]
+        ]
+    },
+    {
+        "id": "66fcb28aa129ef9c",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 4,
+        "width": "3",
+        "height": "1",
+        "name": "Average Power Analytics",
+        "label": "Average Power",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 970,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "76ba225239afde3f",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Count Faults",
+        "func": "let faultCount = flow.get(\"faultCount\") || 0;\nlet previousFault = flow.get(\"previousFault\") || \"NORMAL\";\n\nif (\n    previousFault === \"NORMAL\" &&\n    msg.payload.fault === \"FAULT\"\n) {\n    faultCount += 1;\n}\n\nflow.set(\"faultCount\", faultCount);\nflow.set(\"previousFault\", msg.payload.fault);\n\nmsg.payload = faultCount;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 700,
+        "wires": [
+            [
+                "5c349698a2dfe82b"
+            ]
+        ]
+    },
+    {
+        "id": "5c349698a2dfe82b",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "name": "Fault Counter Analytics",
+        "label": "Total Faults",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 880,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "f67a9cf74f7517c8",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Track Max Temperature",
+        "func": "let maxTemp = flow.get(\"maxTemp\") || 0;\n\nif (msg.payload.temperature > maxTemp) {\n    maxTemp = msg.payload.temperature;\n}\n\nflow.set(\"maxTemp\", maxTemp);\n\nmsg.payload = maxTemp.toFixed(2) + \" °C\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 740,
+        "wires": [
+            [
+                "f964e7ebc2cc67d1"
+            ]
+        ]
+    },
+    {
+        "id": "f964e7ebc2cc67d1",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "name": "Max Temperature Analytics",
+        "label": "Max Temperature",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 980,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "a60b929c2b017df5",
+        "type": "function",
+        "z": "8151e0190ca9ce99",
+        "name": "Calculate System Uptime",
+        "func": "let totalPackets = flow.get(\"totalPackets\") || 0;\nlet healthyPackets = flow.get(\"healthyPackets\") || 0;\n\ntotalPackets++;\n\nif (msg.payload.fault === \"NORMAL\") {\n    healthyPackets++;\n}\n\nflow.set(\"totalPackets\", totalPackets);\nflow.set(\"healthyPackets\", healthyPackets);\n\nlet uptime = (healthyPackets / totalPackets) * 100;\n\nmsg.payload = uptime.toFixed(2) + \" %\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 780,
+        "wires": [
+            [
+                "5bce63ab191ce6b8"
+            ]
+        ]
+    },
+    {
+        "id": "5bce63ab191ce6b8",
+        "type": "ui-text",
+        "z": "8151e0190ca9ce99",
+        "group": "7070a123b1e7404a",
+        "order": 1,
+        "width": "3",
+        "height": "1",
+        "name": "System Uptime Analytics",
+        "label": "System Uptime",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 970,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "31568a59bb2631e9",
+        "type": "mqtt-broker",
+        "name": "Local Mosquitto",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "7070a123b1e7404a",
+        "type": "ui-group",
+        "name": "Solar Parameters",
+        "page": "6efcc7e018c13f97",
+        "width": "12",
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "6efcc7e018c13f97",
+        "type": "ui-page",
+        "name": "Solar Monitoring Dashboard",
+        "ui": "72d0bd4bbebb3397",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "337eaa2e80b95fa8",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "72d0bd4bbebb3397",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "337eaa2e80b95fa8",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "af05f5eb4dfca331",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.30.2"
+        }
+    }
+]
